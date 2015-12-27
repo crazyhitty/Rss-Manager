@@ -1,7 +1,7 @@
 #Rss-Manager
 A simple, easy to use library to parse rss feeds into your app.
 
-[](http://i.imgur.com/r13X3HT.png)
+![](http://i.imgur.com/r13X3HT.png)
 
 #Installation
 
