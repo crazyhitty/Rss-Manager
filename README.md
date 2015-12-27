@@ -39,5 +39,5 @@ Here is a simple example code on how to implement this library.
     
 #TODO
 
-*Provide better documentation
-*Optimize code
+* Provide better documentation
+* Optimize code
