@@ -1,10 +1,16 @@
 #Rss-Manager
+
+[ ![Download](https://api.bintray.com/packages/cr42yh17m4n/maven/rss-manager/images/download.svg) ](https://bintray.com/cr42yh17m4n/maven/rss-manager/_latestVersion)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rss--Manager-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/2954)
+
 A simple, easy to use library to parse rss feeds into your app.
 
 ![](http://i.imgur.com/r13X3HT.png)
 
 #Requirements
-This library requires minimum sdk version 9. 
+This library requires <b>minimum sdk version 9</b>. 
+
+Also add Internet permission to your application manifest file.
 
 #Installation
 
@@ -52,3 +58,9 @@ Here is a simple example code on how to implement this library.
 
 * [Jsoup](https://github.com/jhy/jsoup/)
 * [Material Dialogs](https://github.com/afollestad/material-dialogs)
+
+#App that uses this library
+
+* [Munch](https://github.com/crazyhitty/Munch)
+
+If you use this library and would like to get featured here then just mail me at cr42yh17m4n@gmail.com with your app links and I will add it here. You can also mail me if you want new features.
