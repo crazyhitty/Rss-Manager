@@ -3,6 +3,9 @@ A simple, easy to use library to parse rss feeds into your app.
 
 ![](http://i.imgur.com/r13X3HT.png)
 
+#Requirements
+This library requires minimum sdk version 9. 
+
 #Installation
 
 Add this to your build.gradle version (app module)
@@ -36,10 +39,16 @@ Here is a simple example code on how to implement this library.
 
     @Override
     public void onFailure(String message) {
-
+        Toast.makeText(MainActivity.this, "Error: "+message, Toast.LENGTH_SHORT).show();
     }
     
 #TODO
 
 * Provide better documentation
 * Optimize code
+* Make loading dialog optional
+
+#3rd party library used
+
+* [Jsoup](https://github.com/jhy/jsoup/)
+* [Material Dialogs](https://github.com/afollestad/material-dialogs)
