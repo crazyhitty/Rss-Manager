@@ -48,6 +48,10 @@ Here is a simple example code on how to implement this library.
         Toast.makeText(MainActivity.this, "Error: "+message, Toast.LENGTH_SHORT).show();
     }
     
+#BUGS
+
+* Not every RSS feed url can be parsed via jsoup xml parser.
+    
 #TODO
 
 * Provide better documentation
@@ -63,4 +67,4 @@ Here is a simple example code on how to implement this library.
 
 * [Munch](https://github.com/crazyhitty/Munch)
 
-If you use this library and would like to get it featured here then just mail me at cr42yh17m4n@gmail.com with your app links and I will add it here. You can also mail me if you want new features.
+If your app uses this library and would like to get it featured here then just mail me at cr42yh17m4n@gmail.com with your app links and I will add it here. You can also mail me if you want new features.
