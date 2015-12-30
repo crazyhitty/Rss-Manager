@@ -20,6 +20,7 @@ import java.util.List;
 public class RssReader implements OnFeedLoadListener {
     private String[] mUrlList, mSourceList, mCategories;
     private int[] mCategoryImgIds;
+    private boolean mShowDialog = true;
     private Context mContext;
     private List<RssItem> mRssItems = new ArrayList<>();
     private RssParser mRssParser;
@@ -27,6 +28,7 @@ public class RssReader implements OnFeedLoadListener {
     private MaterialDialog mMaterialDialog;
     private OnRssLoadListener mOnRssLoadListener;
 
+    @Deprecated
     public RssReader(Context context, String[] urlList, String[] sourceList, String[] categories, int[] categoryImgIds, OnRssLoadListener onRssLoadListener) {
         this.mContext = context;
         this.mUrlList = urlList;
@@ -36,7 +38,55 @@ public class RssReader implements OnFeedLoadListener {
         this.mOnRssLoadListener = onRssLoadListener;
     }
 
-    public void readRssFeeds() {
+    public RssReader(Context context) {
+        this.mContext = context;
+    }
+
+    public RssReader urls(String[] urls) {
+        this.mUrlList = urls;
+        return this;
+    }
+
+    public RssReader sources(String[] sources) {
+        this.mSourceList = sources;
+        return this;
+    }
+
+    public RssReader categories(String[] categories) {
+        this.mCategories = categories;
+        return this;
+    }
+
+    @Deprecated
+    public RssReader categoryImgIds(int[] categoryImgIds) {
+        this.mCategoryImgIds = categoryImgIds;
+        return this;
+    }
+
+    public RssReader showDialog(boolean status) {
+        this.mShowDialog = status;
+        return this;
+    }
+
+    public void parse(OnRssLoadListener onRssLoadListener) {
+        this.mOnRssLoadListener = onRssLoadListener;
+
+        if (mShowDialog) {
+            initDialog();
+        }
+
+        if (mRssItems != null) {
+            mRssItems.clear();
+        }
+
+        if (mUrlList != null) {
+            parseRss(0);
+        } else {
+            throw new NullPointerException("Url list cannot be empty");
+        }
+    }
+
+    private void initDialog() {
         mMaterialDialog = new MaterialDialog.Builder(mContext)
                 .title(R.string.loading_feeds)
                 .progress(true, 0)
@@ -64,6 +114,11 @@ public class RssReader implements OnFeedLoadListener {
                 mOnRssLoadListener.onFailure("User performed dismiss action");
             }
         });
+    }
+
+    @Deprecated
+    public void readRssFeeds() {
+        initDialog();
 
         if (mRssItems != null) {
             mRssItems.clear();
@@ -76,9 +131,13 @@ public class RssReader implements OnFeedLoadListener {
             mRssParser = new RssParser(mUrlList[position], this);
             mRssParser.execute();
             String source = getWebsiteName(mUrlList[position]);
-            mMaterialDialog.setContent(source);
+            if (mMaterialDialog != null) {
+                mMaterialDialog.setContent(source);
+            }
         } else {
-            mMaterialDialog.dismiss();
+            if (mMaterialDialog != null) {
+                mMaterialDialog.dismiss();
+            }
             mOnRssLoadListener.onSuccess(mRssItems);
         }
     }

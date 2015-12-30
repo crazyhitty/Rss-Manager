@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements OnRssLoadListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //bind view to the activity
+        //bind views to the activity
         bindViews();
 
         //set toolbar
@@ -56,8 +56,15 @@ public class MainActivity extends AppCompatActivity implements OnRssLoadListener
     //load feeds
     private void loadFeeds(String url) {
         String[] urlArr = {url};
-        RssReader rssReader = new RssReader(MainActivity.this, urlArr, null, null, null, this);
-        rssReader.readRssFeeds();
+
+        //deprecated since v 0.20
+        /*RssReader rssReader = new RssReader(MainActivity.this, urlArr, null, null, null, this);
+        rssReader.readRssFeeds();*/
+
+        new RssReader(MainActivity.this)
+                .showDialog(true)
+                .urls(urlArr)
+                .parse(this);
     }
 
     @Override
