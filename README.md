@@ -3,7 +3,7 @@
 [ ![Download](https://api.bintray.com/packages/cr42yh17m4n/maven/rss-manager/images/download.svg) ](https://bintray.com/cr42yh17m4n/maven/rss-manager/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rss--Manager-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/2954)
 
-A simple, easy to use library to parse rss feeds into your app.
+A simple, lightweight and easy to use library to parse rss feeds into your app.
 
 ![](http://i.imgur.com/r13X3HT.png)
 
@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.crazyhitty.chdev.ks:rss-manager:0.10'
+    compile 'com.crazyhitty.chdev.ks:rss-manager:0.20'
 }
 ```
 
@@ -34,8 +34,10 @@ Here is a simple example code on how to implement this library.
     private void loadFeeds() {
         //you can also pass multiple urls
         String[] urlArr = {"http://feeds.bbci.co.uk/news/rss.xml"};
-        RssReader rssReader = new RssReader(MainActivity.this, urlArr, null, null, null, this);
-        rssReader.readRssFeeds();
+        new RssReader(MainActivity.this)
+                .showDialog(true)
+                .urls(urlArr)
+                .parse(this);
     }
     
     @Override
@@ -56,14 +58,14 @@ Here is a simple example code on how to implement this library.
 
 * Provide better documentation
 * Optimize code
-* Make loading dialog optional
+* ~~Make loading dialog optional~~
 
 #3rd party library used
 
 * [Jsoup](https://github.com/jhy/jsoup/)
 * [Material Dialogs](https://github.com/afollestad/material-dialogs)
 
-#App that uses this library
+#Apps that uses this library
 
 * [Munch](https://github.com/crazyhitty/Munch)
 
