@@ -18,6 +18,15 @@ import java.util.List;
  * Created by Kartik_ch on 11/15/2015.
  */
 public class RssReader implements OnFeedLoadListener {
+    private static String TITLE = "title";
+    private static String DESCRIPTION = "description";
+    private static String LINK = "link";
+    private static String MEDIA_THUMBNAIL = "media|thumbnail";
+    private static String MEDIA_CONTENT = "media|content";
+    private static String IMAGE = "image";
+    private static String CATEGORY = "category";
+    private static String PUB_DATE = "pubDate";
+    private static String URL = "url";
     private String[] mUrlList, mSourceList, mCategories;
     private int[] mCategoryImgIds;
     private boolean mShowDialog = true;
@@ -168,9 +177,9 @@ public class RssReader implements OnFeedLoadListener {
     }
 
     private RssItem getRssItem(Element element) {
-        String title = element.select("title").first().text();
-        String description = element.select("description").first().text();
-        String link = element.select("link").first().text();
+        String title = element.select(TITLE).first().text();
+        String description = element.select(DESCRIPTION).first().text();
+        String link = element.select(LINK).first().text();
         String sourceName = null;
         if (mSourceList != null) {
             sourceName = mSourceList[mPosition];
@@ -180,26 +189,28 @@ public class RssReader implements OnFeedLoadListener {
         String sourceUrlShort = getWebsiteName(mUrlList[mPosition]);
 
         String imageUrl;
-        if (!element.select("media|thumbnail").isEmpty()) {
-            imageUrl = element.select("media|thumbnail").attr("url");
-        } else if (!element.select("media|content").isEmpty()) {
-            imageUrl = element.select("media|content").attr("url");
-        } else if (!element.select("image").isEmpty()) {
-            imageUrl = element.select("image").attr("url");
+        if (!element.select(MEDIA_THUMBNAIL).isEmpty()) {
+            imageUrl = element.select(MEDIA_THUMBNAIL).attr(URL);
+        } else if (!element.select(MEDIA_CONTENT).isEmpty()) {
+            imageUrl = element.select(MEDIA_CONTENT).attr(URL);
+        } else if (!element.select(IMAGE).isEmpty()) {
+            imageUrl = element.select(IMAGE).attr(URL);
         } else {
             imageUrl = null;
         }
         String category = null;
         if (mCategories == null) {
-            try {
-                category = element.select("category").first().text();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
+            if (!element.select(CATEGORY).isEmpty()) {
+                category = element.select(CATEGORY).first().text();
             }
         } else {
             category = mCategories[mPosition];
         }
-        String pubDate = element.select("pubDate").first().text();
+
+        String pubDate = null;
+        if (!element.select(PUB_DATE).isEmpty()) {
+            pubDate = element.select(PUB_DATE).first().text();
+        }
 
         RssItem rssItem = new RssItem();
 

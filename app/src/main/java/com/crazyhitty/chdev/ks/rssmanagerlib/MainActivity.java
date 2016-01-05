@@ -39,9 +39,14 @@ public class MainActivity extends AppCompatActivity implements OnRssLoadListener
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Loading feeds", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                loadFeeds(mETxtUrl.getText().toString());
+                if (!mETxtUrl.getText().toString().isEmpty()) {
+                    Snackbar.make(view, "Loading feeds", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    loadFeeds(mETxtUrl.getText().toString());
+                } else {
+                    Snackbar.make(view, "Please don't leave url blank", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
     }
