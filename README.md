@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.crazyhitty.chdev.ks:rss-manager:0.20'
+    compile 'com.crazyhitty.chdev.ks:rss-manager:0.21'
 }
 ```
 
