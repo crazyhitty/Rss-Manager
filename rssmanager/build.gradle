@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 ext {
     PUBLISH_GROUP_ID = 'com.crazyhitty.chdev.ks'
     PUBLISH_ARTIFACT_ID = 'rss-manager'
-    PUBLISH_VERSION = '0.21'
+    PUBLISH_VERSION = '0.22'
 }
 
 android {
@@ -13,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 3
-        versionName "0.21"
+        versionCode 4
+        versionName "0.22"
     }
     buildTypes {
         release {
@@ -33,7 +33,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'org.jsoup:jsoup:1.7.2'
-    compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') {
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.6@aar') {
         transitive = true
     }
 }
