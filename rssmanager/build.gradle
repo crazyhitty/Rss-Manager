@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 ext {
     PUBLISH_GROUP_ID = 'com.crazyhitty.chdev.ks'
     PUBLISH_ARTIFACT_ID = 'rss-manager'
-    PUBLISH_VERSION = '0.22'
+    PUBLISH_VERSION = '0.23'
 }
 
 android {
@@ -13,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 4
-        versionName "0.22"
+        versionCode 5
+        versionName "0.23"
     }
     buildTypes {
         release {
