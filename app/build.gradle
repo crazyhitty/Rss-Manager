@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "24.0.1"
 
     defaultConfig {
         applicationId "com.crazyhitty.chdev.ks.rssmanagerlib"
@@ -13,10 +13,20 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+signingConfigs {
+    release {
+           storeFile file("/root/keystore.jks")
+           storePassword "jarvismark42"
+           keyAlias "MSFJarvis"
+           keyPassword "jarvismark42"
+     }
 }
 
 repositories {
@@ -28,7 +38,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.4.0'
-    compile('com.github.afollestad.material-dialogs:core:0.9.0.0@aar') {
+    compile('com.afollestad.material-dialogs:core:0.9.0.1@aar') {
         transitive = true
     }
     compile project(':rssmanager')
