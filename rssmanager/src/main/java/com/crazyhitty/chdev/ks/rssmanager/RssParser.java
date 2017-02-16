@@ -1,47 +1,29 @@
 package com.crazyhitty.chdev.ks.rssmanager;
 
-import android.os.AsyncTask;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 /**
- * Created by Kartik_ch on 11/15/2015.
+ * Author:      Kartik Sharma
+ * Email Id:    cr42yh17m4n@gmail.com
+ * Created:     2/13/2017 10:03 PM
+ * Description: Unavailable
  */
-public class RssParser extends AsyncTask<String, Integer, String> {
 
-    private Elements mItems;
-    private String mUrl;
-    private OnFeedLoadListener mOnFeedLoadListener;
+class RssParser {
+    private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
 
-    public RssParser(String url, OnFeedLoadListener onFeedLoadListener) {
-        this.mUrl = url;
-        this.mOnFeedLoadListener = onFeedLoadListener;
+    private RssParser() {
+
     }
 
-    @Override
-    protected String doInBackground(String... strings) {
-        try {
-            Document rssDocument = Jsoup.connect(mUrl).ignoreContentType(true).parser(Parser.xmlParser()).get();
-            mItems = rssDocument.select("item");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "failure";
-        }
-        return "success";
-    }
+    static Call parse(String feedUrl) {
+        Request request = new Request.Builder()
+                .url(feedUrl)
+                .get()
+                .build();
 
-    @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        if (s.equals("success")) {
-            mOnFeedLoadListener.onSuccess(mItems);
-        } else if (s.equals("failure")) {
-            mOnFeedLoadListener.onFailure("Failed to parse the url\n" + mUrl);
-        }
+        return OK_HTTP_CLIENT.newCall(request);
     }
 }

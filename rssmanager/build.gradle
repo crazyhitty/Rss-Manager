@@ -3,18 +3,18 @@ apply plugin: 'com.android.library'
 ext {
     PUBLISH_GROUP_ID = 'com.crazyhitty.chdev.ks'
     PUBLISH_ARTIFACT_ID = 'rss-manager'
-    PUBLISH_VERSION = '0.23'
+    PUBLISH_VERSION = '0.50'
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 23
-        versionCode 5
-        versionName "0.23"
+        targetSdkVersion 25
+        versionCode 6
+        versionName "0.50"
     }
     buildTypes {
         release {
@@ -31,10 +31,14 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'org.jsoup:jsoup:1.7.2'
-    compile('com.github.afollestad.material-dialogs:core:0.8.5.6@aar') {
-        transitive = true
+
+    // Okhttp
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    // Simple Xml converter for java
+    compile('org.simpleframework:simple-xml:2.7.+') {
+        exclude module: 'stax'
+        exclude module: 'stax-api'
+        exclude module: 'xpp3'
     }
 }
 

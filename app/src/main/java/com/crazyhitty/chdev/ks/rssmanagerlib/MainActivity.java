@@ -11,14 +11,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.crazyhitty.chdev.ks.rssmanager.OnRssLoadListener;
-import com.crazyhitty.chdev.ks.rssmanager.RssItem;
+import com.crazyhitty.chdev.ks.rssmanager.RSS;
 import com.crazyhitty.chdev.ks.rssmanager.RssReader;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnRssLoadListener {
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     private Toolbar mToolbar;
     private FloatingActionButton mFab;
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements OnRssLoadListener
             @Override
             public void onClick(View view) {
                 if (!mETxtUrl.getText().toString().isEmpty()) {
-                    Snackbar.make(view, "Loading feeds", Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, "Loading feeds", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
                     loadFeeds(mETxtUrl.getText().toString());
                 } else {
@@ -60,30 +60,26 @@ public class MainActivity extends AppCompatActivity implements OnRssLoadListener
 
     //load feeds
     private void loadFeeds(String url) {
-        String[] urlArr = {url};
+        RssReader.getInstance()
+                .callback(new RssReader.RssCallback() {
+                    @Override
+                    public void rssFeedsLoaded(RSS... rss) {
+                        List<String> rssTitles = new ArrayList<>();
+                        for (int i = 0; i < rss[0].getChannel().getItems().size(); i++) {
+                            String title = rss[0].getChannel().getItems().get(i).getTitle();
+                            rssTitles.add(title);
+                        }
+                        ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, rssTitles);
+                        mListViewFeeds.setAdapter(stringArrayAdapter);
+                        Snackbar.make(mFab, "Feeds loaded", Snackbar.LENGTH_SHORT)
+                                .setAction("Action", null).show();
+                    }
 
-        //deprecated since v 0.20
-        /*RssReader rssReader = new RssReader(MainActivity.this, urlArr, null, null, null, this);
-        rssReader.readRssFeeds();*/
-
-        new RssReader(MainActivity.this)
-                .showDialog(true)
-                .urls(urlArr)
-                .parse(this);
-    }
-
-    @Override
-    public void onSuccess(List<RssItem> rssItems) {
-        List<String> rssTitles = new ArrayList<>();
-        for (RssItem rssItem : rssItems) {
-            rssTitles.add(rssItem.getTitle());
-        }
-        ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, rssTitles);
-        mListViewFeeds.setAdapter(stringArrayAdapter);
-    }
-
-    @Override
-    public void onFailure(String message) {
-        Toast.makeText(MainActivity.this, "Error:\n" + message, Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void unableToReadRssFeeds(String errorMessage) {
+                        Toast.makeText(MainActivity.this, "Error:\n" + errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .loadFeeds(url);
     }
 }

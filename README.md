@@ -14,56 +14,51 @@ Also add Internet permission to your application manifest file.
 
 #Installation
 
-Add this to your build.gradle version (app module)
+Add this to your project level build.gradle file.
 
 ```
 repositories {
     maven { url "https://jitpack.io" }
 }
+```
 
+Add this to your app level build.gradle file.
+
+```
 dependencies {
-    compile 'com.crazyhitty.chdev.ks:rss-manager:0.23'
+    compile ('com.crazyhitty.chdev.ks:rss-manager:0.50'){
+            exclude module: 'stax'
+            exclude module: 'stax-api'
+            exclude module: 'xpp3'
+        }
 }
 ```
 
-#How to use
+#Implementation
 
-Here is a simple example code on how to implement this library.
+Loading a single feed url.
 
-    //load feeds
-    private void loadFeeds() {
-        //you can also pass multiple urls
-        String[] urlArr = {"http://feeds.bbci.co.uk/news/rss.xml"};
-        new RssReader(MainActivity.this)
-                .showDialog(true)
-                .urls(urlArr)
-                .parse(this);
-    }
+```
+    RssReader.getInstance()
+             .callback(new RssReader.RssCallback() {
+                 @Override
+                 public void rssFeedsLoaded(RSS... rss) {
+                     // Feeds loaded.
+                 }
+
+                 @Override
+                 public void unableToReadRssFeeds(String errorMessage) {
+                     // Unable to parse feeds.
+                 }
+             })
+             .loadFeeds(url);
+```
+
+*Loading multiple feed urls will be available in the next release.*
     
-    @Override
-    public void onSuccess(List<RssItem> rssItems) {
-        Toast.makeText(MainActivity.this, "Item: "+rssItems.get(0).getTitle(), Toast.LENGTH_SHORT).show();
-    }
+#CONTRIBUTING
 
-    @Override
-    public void onFailure(String message) {
-        Toast.makeText(MainActivity.this, "Error: "+message, Toast.LENGTH_SHORT).show();
-    }
-    
-#BUGS
-
-* Not every RSS feed url can be parsed via jsoup xml parser.
-    
-#TODO
-
-* Provide better documentation
-* Optimize code
-* ~~Make loading dialog optional~~
-
-#3rd party library used
-
-* [Jsoup](https://github.com/jhy/jsoup/)
-* [Material Dialogs](https://github.com/afollestad/material-dialogs)
+You can contribute to the development of this library by posting new bugs/issues or any feature requests that you would like to see in the library.
 
 #Apps that uses this library
 

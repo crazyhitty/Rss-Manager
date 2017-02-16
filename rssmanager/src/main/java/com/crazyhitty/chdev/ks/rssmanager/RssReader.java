@@ -1,229 +1,93 @@
 package com.crazyhitty.chdev.ks.rssmanager;
 
-import android.content.Context;
-import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
+import org.simpleframework.xml.core.Persister;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import java.io.IOException;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
- * Created by Kartik_ch on 11/15/2015.
+ * Author:      Kartik Sharma
+ * Email Id:    cr42yh17m4n@gmail.com
+ * Created:     2/13/2017 11:52 PM
+ * Description: Unavailable
  */
-public class RssReader implements OnFeedLoadListener {
-    private static String TITLE = "title";
-    private static String DESCRIPTION = "description";
-    private static String LINK = "link";
-    private static String MEDIA_THUMBNAIL = "media|thumbnail";
-    private static String MEDIA_CONTENT = "media|content";
-    private static String IMAGE = "image";
-    private static String CATEGORY = "category";
-    private static String PUB_DATE = "pubDate";
-    private static String URL = "url";
-    private String[] mUrlList, mSourceList, mCategories;
-    private int[] mCategoryImgIds;
-    private boolean mShowDialog = true;
-    private Context mContext;
-    private List<RssItem> mRssItems = new ArrayList<>();
-    private RssParser mRssParser;
-    private int mPosition = 0;
-    private MaterialDialog mMaterialDialog;
-    private OnRssLoadListener mOnRssLoadListener;
 
-    @Deprecated
-    public RssReader(Context context, String[] urlList, String[] sourceList, String[] categories, int[] categoryImgIds, OnRssLoadListener onRssLoadListener) {
-        this.mContext = context;
-        this.mUrlList = urlList;
-        this.mSourceList = sourceList;
-        this.mCategories = categories;
-        this.mCategoryImgIds = categoryImgIds;
-        this.mOnRssLoadListener = onRssLoadListener;
+public class RssReader {
+    private static final String TAG = "RssReader";
+
+    private static RssReader rssReaderInstance;
+
+    private RssCallback rssCallback;
+
+    private RssReader() {
+
     }
 
-    public RssReader(Context context) {
-        this.mContext = context;
-    }
-
-    public RssReader urls(String[] urls) {
-        this.mUrlList = urls;
-        return this;
-    }
-
-    public RssReader sources(String[] sources) {
-        this.mSourceList = sources;
-        return this;
-    }
-
-    public RssReader categories(String[] categories) {
-        this.mCategories = categories;
-        return this;
-    }
-
-    @Deprecated
-    public RssReader categoryImgIds(int[] categoryImgIds) {
-        this.mCategoryImgIds = categoryImgIds;
-        return this;
-    }
-
-    public RssReader showDialog(boolean status) {
-        this.mShowDialog = status;
-        return this;
-    }
-
-    public void parse(OnRssLoadListener onRssLoadListener) {
-        this.mOnRssLoadListener = onRssLoadListener;
-
-        if (mShowDialog) {
-            initDialog();
+    public static RssReader getInstance() {
+        if (rssReaderInstance == null) {
+            rssReaderInstance = new RssReader();
         }
-
-        if (mRssItems != null) {
-            mRssItems.clear();
-        }
-
-        if (mUrlList != null) {
-            parseRss(0);
-        } else {
-            throw new NullPointerException("Url list cannot be empty");
-        }
+        return rssReaderInstance;
     }
 
-    private void initDialog() {
-        mMaterialDialog = new MaterialDialog.Builder(mContext)
-                .title(R.string.loading_feeds)
-                .progress(true, 0)
-                .progressIndeterminateStyle(true)
-                .cancelable(false)
-                .negativeText(R.string.cancel)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
+    public RssReader callback(RssCallback rssCallback) {
+        rssReaderInstance.rssCallback = rssCallback;
+        return rssReaderInstance;
+    }
+
+    public void loadFeeds(String... urls) {
+        RssParser.parse(urls[0])
+                .enqueue(new Callback() {
                     @Override
-                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                        if (mRssParser != null) {
-                            mRssParser.cancel(true);
+                    public void onFailure(Call call, final IOException e) {
+                        Log.e(TAG, "onFailure", e);
+                        if (rssReaderInstance.rssCallback != null) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    rssReaderInstance.rssCallback.unableToReadRssFeeds(e.getMessage());
+                                }
+                            });
                         }
-                        mOnRssLoadListener.onFailure("User performed dismiss action");
                     }
-                })
-                .build();
-        mMaterialDialog.show();
 
-        mMaterialDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                if (mRssParser != null) {
-                    mRssParser.cancel(true);
-                }
-                mOnRssLoadListener.onFailure("User performed dismiss action");
-            }
-        });
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        Log.d(TAG, "onResponse: responseCode: " + response.code());
+                        if (rssReaderInstance.rssCallback != null) {
+                            try {
+                                final RSS rss = new Persister().read(RSS.class, response.body().string());
+                                Log.d(TAG, "onResponse: RssParsed: " + rss.toString());
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        rssReaderInstance.rssCallback.rssFeedsLoaded(rss);
+                                    }
+                                });
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        rssReaderInstance.rssCallback.unableToReadRssFeeds(e.getMessage());
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
     }
 
-    @Deprecated
-    public void readRssFeeds() {
-        initDialog();
+    public interface RssCallback {
+        void rssFeedsLoaded(RSS... rss);
 
-        if (mRssItems != null) {
-            mRssItems.clear();
-        }
-        parseRss(0);
-    }
-
-    private void parseRss(int position) {
-        if (position != mUrlList.length) {
-            mRssParser = new RssParser(mUrlList[position], this);
-            mRssParser.execute();
-            String source = getWebsiteName(mUrlList[position]);
-            if (mMaterialDialog != null) {
-                mMaterialDialog.setContent(source);
-            }
-        } else {
-            if (mMaterialDialog != null) {
-                mMaterialDialog.dismiss();
-            }
-            mOnRssLoadListener.onSuccess(mRssItems);
-        }
-    }
-
-    private String getWebsiteName(String url) {
-        URI uri;
-        try {
-            uri = new URI(url);
-            return uri.getHost();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return url;
-    }
-
-    @Override
-    public void onSuccess(Elements items) {
-        for (Element item : items) {
-            mRssItems.add(getRssItem(item));
-        }
-        mPosition++;
-        parseRss(mPosition);
-    }
-
-    @Override
-    public void onFailure(String message) {
-        mOnRssLoadListener.onFailure(message);
-    }
-
-    private RssItem getRssItem(Element element) {
-        String title = element.select(TITLE).first().text();
-        String description = element.select(DESCRIPTION).first().text();
-        String link = element.select(LINK).first().text();
-        String sourceName = null;
-        if (mSourceList != null) {
-            sourceName = mSourceList[mPosition];
-        }
-
-        String sourceUrl = mUrlList[mPosition];
-        String sourceUrlShort = getWebsiteName(mUrlList[mPosition]);
-
-        String imageUrl;
-        if (!element.select(MEDIA_THUMBNAIL).isEmpty()) {
-            imageUrl = element.select(MEDIA_THUMBNAIL).attr(URL);
-        } else if (!element.select(MEDIA_CONTENT).isEmpty()) {
-            imageUrl = element.select(MEDIA_CONTENT).attr(URL);
-        } else if (!element.select(IMAGE).isEmpty()) {
-            imageUrl = element.select(IMAGE).attr(URL);
-        } else {
-            imageUrl = null;
-        }
-        String category = null;
-        if (mCategories == null) {
-            if (!element.select(CATEGORY).isEmpty()) {
-                category = element.select(CATEGORY).first().text();
-            }
-        } else {
-            category = mCategories[mPosition];
-        }
-
-        String pubDate = null;
-        if (!element.select(PUB_DATE).isEmpty()) {
-            pubDate = element.select(PUB_DATE).first().text();
-        }
-
-        RssItem rssItem = new RssItem();
-
-        rssItem.setTitle(title);
-        rssItem.setDescription(description);
-        rssItem.setLink(link);
-        rssItem.setSourceName(sourceName);
-        rssItem.setSourceUrl(sourceUrl);
-        rssItem.setSourceUrlShort(sourceUrlShort);
-        rssItem.setImageUrl(imageUrl);
-        rssItem.setCategory(category);
-        rssItem.setPubDate(pubDate);
-
-        return rssItem;
+        void unableToReadRssFeeds(String errorMessage);
     }
 }
