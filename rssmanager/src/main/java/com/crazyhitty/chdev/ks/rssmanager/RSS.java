@@ -19,7 +19,7 @@ public class RSS {
         return version;
     }
 
-    public void setVersion(String version) {
+    void setVersion(String version) {
         this.version = version;
     }
 
@@ -27,7 +27,7 @@ public class RSS {
         return channel;
     }
 
-    public void setChannel(Channel channel) {
+    void setChannel(Channel channel) {
         this.channel = channel;
     }
 

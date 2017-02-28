@@ -1,16 +1,23 @@
 package com.crazyhitty.chdev.ks.rssmanager;
 
-import android.os.Handler;
-import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.simpleframework.xml.core.Persister;
 
-import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Author:      Kartik Sharma
@@ -22,71 +29,78 @@ import okhttp3.Response;
 public class RssReader {
     private static final String TAG = "RssReader";
 
-    private static RssReader rssReaderInstance;
-
+    @NonNull
     private RssCallback rssCallback;
 
-    private RssReader() {
+    private Disposable disposable;
 
+    public RssReader(@NonNull RssCallback rssCallback) {
+        this.rssCallback = rssCallback;
     }
 
-    public static RssReader getInstance() {
-        if (rssReaderInstance == null) {
-            rssReaderInstance = new RssReader();
+    public void loadFeeds(final String... urls) {
+        final long startTimeMillis = System.currentTimeMillis();
+
+        final List<Observable<RSS>> observables = new ArrayList<>();
+        for (final String url : urls) {
+            observables.add(Observable.create(new ObservableOnSubscribe<RSS>() {
+                @Override
+                public void subscribe(ObservableEmitter<RSS> emitter) throws Exception {
+                    try {
+                        RSS rss = new Persister().read(RSS.class, RssParser.parse(url).body().string());
+                        Log.d(TAG, "subscribe: url: " + url + " ; thread: " + Thread.currentThread().getName());
+                        emitter.onNext(rss);
+                        emitter.onComplete();
+                    } catch (InterruptedIOException e) {
+                        if (!emitter.isDisposed()) {
+                            emitter.onError(e);
+                        }
+                    }
+                }
+            }));
         }
-        return rssReaderInstance;
+
+        Observable<List<RSS>> rssListObservable = Observable.zip(observables, new Function<Object[], List<RSS>>() {
+            @Override
+            public List<RSS> apply(Object[] objects) throws Exception {
+                final List<RSS> rssList = new ArrayList<RSS>();
+
+                for (Object object : objects) {
+                    rssList.add((RSS) object);
+                }
+
+                return rssList;
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        disposable = rssListObservable.subscribeWith(new DisposableObserver<List<RSS>>() {
+            @Override
+            public void onNext(List<RSS> rssList) {
+                rssCallback.rssFeedsLoaded(rssList);
+                Log.d(TAG, "onNext: rssListSize: " + rssList.size());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                rssCallback.unableToReadRssFeeds(e.getMessage());
+                Log.e(TAG, "onError: " + e.getMessage(), e);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, String.format(Locale.ENGLISH, "onComplete: done with time spent(ms): %d", (System.currentTimeMillis() - startTimeMillis)));
+            }
+        });
     }
 
-    public RssReader callback(RssCallback rssCallback) {
-        rssReaderInstance.rssCallback = rssCallback;
-        return rssReaderInstance;
-    }
-
-    public void loadFeeds(String... urls) {
-        RssParser.parse(urls[0])
-                .enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, final IOException e) {
-                        Log.e(TAG, "onFailure", e);
-                        if (rssReaderInstance.rssCallback != null) {
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    rssReaderInstance.rssCallback.unableToReadRssFeeds(e.getMessage());
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        Log.d(TAG, "onResponse: responseCode: " + response.code());
-                        if (rssReaderInstance.rssCallback != null) {
-                            try {
-                                final RSS rss = new Persister().read(RSS.class, response.body().string());
-                                Log.d(TAG, "onResponse: RssParsed: " + rss.toString());
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        rssReaderInstance.rssCallback.rssFeedsLoaded(rss);
-                                    }
-                                });
-                            } catch (final Exception e) {
-                                e.printStackTrace();
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        rssReaderInstance.rssCallback.unableToReadRssFeeds(e.getMessage());
-                                    }
-                                });
-                            }
-                        }
-                    }
-                });
+    // Crashes
+    public void destroy() {
+        disposable.dispose();
     }
 
     public interface RssCallback {
-        void rssFeedsLoaded(RSS... rss);
+        void rssFeedsLoaded(List<RSS> rssList);
 
         void unableToReadRssFeeds(String errorMessage);
     }

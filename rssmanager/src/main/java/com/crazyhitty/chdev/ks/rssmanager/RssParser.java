@@ -1,8 +1,11 @@
 package com.crazyhitty.chdev.ks.rssmanager;
 
-import okhttp3.Call;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Author:      Kartik Sharma
@@ -12,18 +15,24 @@ import okhttp3.Request;
  */
 
 class RssParser {
-    private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
+    private static final int TIMEOUT_SECS = 30;
+
+    private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
+            .connectTimeout(TIMEOUT_SECS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECS, TimeUnit.SECONDS)
+            .build();
 
     private RssParser() {
 
     }
 
-    static Call parse(String feedUrl) {
+    static Response parse(String feedUrl) throws IOException {
         Request request = new Request.Builder()
                 .url(feedUrl)
                 .get()
                 .build();
 
-        return OK_HTTP_CLIENT.newCall(request);
+        return OK_HTTP_CLIENT.newCall(request).execute();
     }
 }

@@ -3,8 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.crazyhitty.chdev.ks.rssmanagerlib.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_add_24dp"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/action_add"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_done"
+        android:icon="@drawable/ic_done_24dp"
+        android:orderInCategory="101"
+        android:title="@string/action_done"
+        app:showAsAction="ifRoom"/>
 </menu>

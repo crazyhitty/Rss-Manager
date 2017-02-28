@@ -5,7 +5,7 @@
 
 A simple, lightweight and easy to use library to parse rss feeds into your app.
 
-![](http://i.imgur.com/r13X3HT.png)
+![](http://i.imgur.com/I9kNDzP.png)
 
 #Requirements
 This library requires <b>minimum sdk version 9</b>. 
@@ -26,7 +26,7 @@ Add this to your app level build.gradle file.
 
 ```
 dependencies {
-    compile ('com.crazyhitty.chdev.ks:rss-manager:0.50'){
+    compile ('com.crazyhitty.chdev.ks:rss-manager:0.75'){
             exclude module: 'stax'
             exclude module: 'stax-api'
             exclude module: 'xpp3'
@@ -36,25 +36,30 @@ dependencies {
 
 #Implementation
 
-Loading a single feed url.
-
 ```
-    RssReader.getInstance()
-             .callback(new RssReader.RssCallback() {
-                 @Override
-                 public void rssFeedsLoaded(RSS... rss) {
-                     // Feeds loaded.
-                 }
+private RssReader rssReader = new RssReader(this);
 
-                 @Override
-                 public void unableToReadRssFeeds(String errorMessage) {
-                     // Unable to parse feeds.
-                 }
-             })
-             .loadFeeds(url);
+//load feeds
+private void loadFeeds(String[] urls) {
+    rssReader.loadFeeds(urls);
+}
+
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    rssReader.destroy();
+}
+
+@Override
+public void rssFeedsLoaded(List<RSS> rssList) {
+    // Feeds loaded, do whatever you want to do with them.
+}
+
+@Override
+public void unableToReadRssFeeds(String errorMessage) {
+    // Oops, library was unable to parse your feed url.
+}
 ```
-
-*Loading multiple feed urls will be available in the next release.*
     
 #CONTRIBUTING
 

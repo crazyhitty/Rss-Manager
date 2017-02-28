@@ -1,6 +1,14 @@
 <resources>
-    <string name="app_name">RssManagerLib</string>
+    <string name="app_name">RssManager Demo</string>
+    <string name="detail_app_name">Details</string>
     <string name="action_settings">Settings</string>
     <string name="input_url">Input url</string>
     <string name="enter_url">Enter a valid url</string>
+    <string name="action_add">Add</string>
+    <string name="rss_feed_url">RSS feed url</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="remove">Remove</string>
+    <string name="action_done">Done</string>
+    <string name="no_url_available">No url available!</string>
 </resources>

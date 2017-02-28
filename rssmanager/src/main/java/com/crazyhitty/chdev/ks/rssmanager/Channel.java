@@ -41,7 +41,7 @@ public class Channel {
         return links;
     }
 
-    public void setLinks(List<Link> links) {
+    void setLinks(List<Link> links) {
         this.links = links;
     }
 
@@ -49,7 +49,7 @@ public class Channel {
         return items;
     }
 
-    public void setItems(List<Item> items) {
+    void setItems(List<Item> items) {
         this.items = items;
     }
 
@@ -57,7 +57,7 @@ public class Channel {
         return title;
     }
 
-    public void setTitle(String title) {
+    void setTitle(String title) {
         this.title = title;
     }
 
@@ -65,7 +65,7 @@ public class Channel {
         return language;
     }
 
-    public void setLanguage(String language) {
+    void setLanguage(String language) {
         this.language = language;
     }
 
@@ -73,7 +73,7 @@ public class Channel {
         return ttl;
     }
 
-    public void setTtl(int ttl) {
+    void setTtl(int ttl) {
         this.ttl = ttl;
     }
 
@@ -81,7 +81,7 @@ public class Channel {
         return pubDate;
     }
 
-    public void setPubDate(String pubDate) {
+    void setPubDate(String pubDate) {
         this.pubDate = pubDate;
     }
 
@@ -114,7 +114,7 @@ public class Channel {
             return href;
         }
 
-        public void setHref(String href) {
+        void setHref(String href) {
             this.href = href;
         }
 
@@ -122,7 +122,7 @@ public class Channel {
             return rel;
         }
 
-        public void setRel(String rel) {
+        void setRel(String rel) {
             this.rel = rel;
         }
 
@@ -130,7 +130,7 @@ public class Channel {
             return contentType;
         }
 
-        public void setContentType(String contentType) {
+        void setContentType(String contentType) {
             this.contentType = contentType;
         }
 
@@ -138,7 +138,7 @@ public class Channel {
             return link;
         }
 
-        public void setLink(String link) {
+        void setLink(String link) {
             this.link = link;
         }
     }
@@ -181,7 +181,7 @@ public class Channel {
             return title;
         }
 
-        public void setTitle(String title) {
+        void setTitle(String title) {
             this.title = title;
         }
 
@@ -189,7 +189,7 @@ public class Channel {
             return link;
         }
 
-        public void setLink(String link) {
+        void setLink(String link) {
             this.link = link;
         }
 
@@ -197,7 +197,7 @@ public class Channel {
             return description;
         }
 
-        public void setDescription(String description) {
+        void setDescription(String description) {
             this.description = description;
         }
 
@@ -205,7 +205,7 @@ public class Channel {
             return author;
         }
 
-        public void setAuthor(String author) {
+        void setAuthor(String author) {
             this.author = author;
         }
 
@@ -213,7 +213,7 @@ public class Channel {
             return category;
         }
 
-        public void setCategory(String category) {
+        void setCategory(String category) {
             this.category = category;
         }
 
@@ -221,7 +221,7 @@ public class Channel {
             return comments;
         }
 
-        public void setComments(String comments) {
+        void setComments(String comments) {
             this.comments = comments;
         }
 
@@ -229,7 +229,7 @@ public class Channel {
             return enclosure;
         }
 
-        public void setEnclosure(String enclosure) {
+        void setEnclosure(String enclosure) {
             this.enclosure = enclosure;
         }
 
@@ -237,7 +237,7 @@ public class Channel {
             return guid;
         }
 
-        public void setGuid(String guid) {
+        void setGuid(String guid) {
             this.guid = guid;
         }
 
@@ -245,7 +245,7 @@ public class Channel {
             return pubDate;
         }
 
-        public void setPubDate(String pubDate) {
+        void setPubDate(String pubDate) {
             this.pubDate = pubDate;
         }
 
@@ -253,7 +253,7 @@ public class Channel {
             return source;
         }
 
-        public void setSource(String source) {
+        void setSource(String source) {
             this.source = source;
         }
 
