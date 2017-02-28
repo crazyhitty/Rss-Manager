@@ -2,6 +2,7 @@
 
 [ ![Download](https://api.bintray.com/packages/cr42yh17m4n/maven/rss-manager/images/download.svg) ](https://bintray.com/cr42yh17m4n/maven/rss-manager/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rss--Manager-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/2954)
+<a href='https://play.google.com/store/apps/details?id=com.crazyhitty.chdev.ks.rssmanagerlib.demo'><img alt='Get it on Google Play' src='https://developer.android.com/images/brand/en_generic_rgb_wo_45.png'/></a>
 
 A simple, lightweight and easy to use library to parse rss feeds into your app.
 
