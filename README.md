@@ -1,4 +1,4 @@
-#Rss-Manager
+# Rss-Manager
 
 [ ![Download](https://api.bintray.com/packages/cr42yh17m4n/maven/rss-manager/images/download.svg) ](https://bintray.com/cr42yh17m4n/maven/rss-manager/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rss--Manager-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/2954)
@@ -8,12 +8,12 @@ A simple, lightweight and easy to use library to parse rss feeds into your app.
 
 ![](http://i.imgur.com/I9kNDzP.png)
 
-#Requirements
+# Requirements
 This library requires <b>minimum sdk version 9</b>. 
 
 Also add Internet permission to your application manifest file.
 
-#Installation
+# Installation
 
 Add this to your project level build.gradle file.
 
@@ -35,7 +35,7 @@ dependencies {
 }
 ```
 
-#Implementation
+# Implementation
 
 ```
 private RssReader rssReader = new RssReader(this);
@@ -62,11 +62,11 @@ public void unableToReadRssFeeds(String errorMessage) {
 }
 ```
     
-#CONTRIBUTING
+# CONTRIBUTING
 
 You can contribute to the development of this library by posting new bugs/issues or any feature requests that you would like to see in the library.
 
-#Apps that uses this library
+# Apps that uses this library
 
 * [Munch](https://github.com/crazyhitty/Munch)
 
